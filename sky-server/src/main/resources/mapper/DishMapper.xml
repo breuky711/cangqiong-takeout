@@ -8,4 +8,27 @@
         values
         (#{name}, #{categoryId}, #{price}, #{description}, #{image}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
     </insert>
+
+    <select id="pageQuery" resultType="com.sky.vo.DishVO">
+        select d.* ,c.name as categoryName from dish d left outer join category c on d.category_id = c.id
+        <where>
+            <if test="name != null">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <delete id="deleteByIds">
+        delete from dish where id in
+                 <foreach item="id" collection="ids" separator="," open="(" close=")">
+                   #{id}
+                 </foreach>
+    </delete>
 </mapper>
