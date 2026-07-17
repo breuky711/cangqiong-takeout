@@ -5,4 +5,9 @@ sky:
     port: 3306
     database: sky_take_out
     username: root
-    password: 67657
+    password: ${MYSQL_PASSWORD:root}
+  alioss:
+    endpoint: ${ALIOSS_ENDPOINT:oss-cn-beijing.aliyuncs.com}
+    access-key-id: ${ALIOSS_ACCESS_KEY_ID}
+    access-key-secret: ${ALIOSS_ACCESS_KEY_SECRET}
+    bucket-name: ${ALIOSS_BUCKET_NAME}
