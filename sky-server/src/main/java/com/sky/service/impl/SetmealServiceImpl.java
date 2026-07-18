@@ -76,4 +76,12 @@ public class SetmealServiceImpl implements SetmealService {
         setmealVO.setSetmealDishes(setmealDishes);
         return setmealVO;
     }
+
+    /*
+    * 套餐起售、停售
+    * */
+    @Override
+    public void startAndStop(Integer status, Long id) {
+        setmealMapper.startAndStop(status,id);
+    }
 }

@@ -8,6 +8,7 @@ import com.sky.enumeration.OperationType;
 import com.sky.result.PageResult;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface SetmealMapper {
@@ -27,4 +28,7 @@ public interface SetmealMapper {
 
     @Select("select * from setmeal where id = #{id}")
     Setmeal getById(Long id);
+
+    @Update("update setmeal set status = #{status} where id = #{id}")
+    void startAndStop(Integer status, Long id);
 }
