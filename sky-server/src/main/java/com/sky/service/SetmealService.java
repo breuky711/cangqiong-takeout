@@ -7,6 +7,8 @@ import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.vo.SetmealVO;
 
+import java.util.List;
+
 public interface SetmealService {
 
     /*
@@ -19,4 +21,6 @@ public interface SetmealService {
     SetmealVO getById(Long id);
 
     void startAndStop(Integer status, Long id);
+
+    void deleteByIds(List<Long> ids);
 }

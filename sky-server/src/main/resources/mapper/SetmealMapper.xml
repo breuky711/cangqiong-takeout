@@ -16,5 +16,23 @@
             <if test="status != null">and status = #{status}</if>
         </where>
     </select>
+    <select id="countByIds" resultType="java.lang.Integer">
+        select count(*) from setmeal
+        <where>
+            <if test="ids != null and ids.size() > 0">and id in
+                <foreach item="id" collection="ids" separator="," open="(" close=")">
+                    #{id}
+                </foreach>
+            </if>
+        and status = 1
+        </where>
+    </select>
 
+    <delete id="deleteByIds">
+        delete from setmeal
+        where id in
+        <foreach item="id" collection="ids" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>
