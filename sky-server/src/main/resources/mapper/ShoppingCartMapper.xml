@@ -12,4 +12,14 @@
             <if test="dishFlavor != null">and dish_flavor = #{dishFlavor}</if>
         </where>
     </select>
+
+    <delete id="delete" parameterType="com.sky.entity.ShoppingCart">
+        delete from shopping_cart
+        <where>
+            <if test="userId != null">and user_id = #{userId}</if>
+            <if test="dishId != null">and dish_id = #{dishId}</if>
+            <if test="setmealId != null">and setmeal_id = #{setmealId}</if>
+            <if test="dishFlavor != null">and dish_flavor = #{dishFlavor}</if>
+        </where>
+    </delete>
 </mapper>

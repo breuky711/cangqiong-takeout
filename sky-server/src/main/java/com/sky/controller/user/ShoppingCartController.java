@@ -7,6 +7,7 @@ import com.sky.service.ShoppingcartService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +52,15 @@ public class ShoppingCartController {
     public Result clean(){
         log.info("清空购物车");
         shoppingcartService.clean();
+        return Result.success();
+    }
+    /*
+    * 删除购物车中一个商品
+    * */
+    @PostMapping("/sub")
+    public Result delete(@RequestBody ShoppingCartDTO shoppingCartDTO){
+        log.info("删除购物车中一个商品：{}", shoppingCartDTO);
+        shoppingcartService.delete(shoppingCartDTO);
         return Result.success();
     }
 }
