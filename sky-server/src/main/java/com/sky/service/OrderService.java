@@ -13,4 +13,6 @@ public interface OrderService {
     PageResult historyOrdersQuery(int page, int pageSize, Integer status);
 
     OrderVO getOrderById(Long id);
+
+    void cancel(Long id);
 }

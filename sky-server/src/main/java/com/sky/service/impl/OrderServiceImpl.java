@@ -40,6 +40,7 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ShoppingCartMapper shoppingCartMapper;
 
+    private static final int ORDER_CANCEL = 6;
     @Transactional
     public OrderSubmitVO submit(OrdersSubmitDTO ordersSubmitDTO) {
         // 1. 判断订单是否能正常提交（地址簿为空、购物车为空），若不正常则抛出业务异常
@@ -121,5 +122,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
         orderVO.setOrderDetailList(orderDetailList);
         return orderVO;
+    }
+
+    /*
+    * 取消订单
+    * */
+
+    @Override
+    public void cancel(Long id) {
+        // 将订单状态修改为已取消
+        orderMapper.cancel(id, ORDER_CANCEL, LocalDateTime.now().toString().substring(0, 19));
     }
 }

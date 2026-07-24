@@ -4,6 +4,7 @@ import com.sky.entity.Orders;
 import com.sky.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface OrderMapper {
 
     @Select("select * from orders where id = #{id}")
     OrderVO getOrderById(Long id);
+    @Update("update orders set status = #{status}, cancel_time = #{cancelTime} where id = #{id}")
+    void cancel(Long id, Integer status, String cancelTime);
 }
