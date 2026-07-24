@@ -108,4 +108,18 @@ public class OrderServiceImpl implements OrderService {
         });
         return new PageResult(orderVOList.size(), orderVOList);
     }
+
+    /*
+    * 根据订单id查询订单和订单细节
+    * */
+
+    @Override
+    public OrderVO getOrderById(Long id) {
+        // 获取订单信息
+        OrderVO orderVO = orderMapper.getOrderById(id);
+        // 获取订单细节信息
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+        orderVO.setOrderDetailList(orderDetailList);
+        return orderVO;
+    }
 }
