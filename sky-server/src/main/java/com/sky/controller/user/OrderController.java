@@ -9,6 +9,7 @@ import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -63,6 +64,16 @@ public class OrderController {
     public Result cancel(@PathVariable Long id){
         log.info("用户取消订单：id为{}", id);
         orderService.cancel(id);
+        return Result.success();
+    }
+
+    /*
+    * 再来一单
+    * */
+    @PostMapping("/repetition/{id}")
+    public Result again(@PathVariable Long id){
+        log.info("再来一单：id为{}", id);
+        orderService.again(id);
         return Result.success();
     }
 }

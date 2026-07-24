@@ -133,4 +133,21 @@ public class OrderServiceImpl implements OrderService {
         // 将订单状态修改为已取消
         orderMapper.cancel(id, ORDER_CANCEL, LocalDateTime.now().toString().substring(0, 19));
     }
+
+    /*
+    * 再来一单
+    * */
+
+    @Override
+    public void again(Long id) {
+        // 将该订单的商品重新加到购物车
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+        for (OrderDetail orderDetail : orderDetailList) {
+            ShoppingCart shoppingCart = new ShoppingCart();
+            Long userId = BaseContext.getCurrentId();
+            shoppingCart.setUserId(userId);
+            BeanUtils.copyProperties(orderDetail, shoppingCart);
+            shoppingCartMapper.insert(shoppingCart);
+        }
+    }
 }
