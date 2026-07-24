@@ -1,7 +1,9 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
@@ -13,6 +15,7 @@ import com.sky.mapper.AddressBookMapper;
 import com.sky.mapper.OrderDetailMapper;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.ShoppingCartMapper;
+import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
@@ -87,5 +90,22 @@ public class OrderServiceImpl implements OrderService {
                 .orderTime(orders.getOrderTime())
                 .build();
         return submitVO;
+    }
+
+    /*
+    * 用户端历史订单查询
+    * */
+
+    @Override
+    public PageResult historyOrdersQuery(int page, int pageSize, Integer status) {
+        // 查询订单信息
+        PageHelper.startPage(page, pageSize);
+        List<OrderVO> orderVOList = orderMapper.historyOrdersQuery(status);
+        // 查询订单详细信息
+        orderVOList.forEach(orderVO -> {
+            List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orderVO.getId());
+            orderVO.setOrderDetailList(orderDetailList);
+        });
+        return new PageResult(orderVOList.size(), orderVOList);
     }
 }
