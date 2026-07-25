@@ -1,6 +1,5 @@
 package com.sky.service;
 
-import com.github.pagehelper.PageHelper;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.result.PageResult;
@@ -8,13 +7,29 @@ import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 
 public interface OrderService {
+
+    /**
+     * 用户下单
+     */
     OrderSubmitVO submit(OrdersSubmitDTO ordersSubmitDTO);
 
-    PageResult historyOrdersQuery(int page, int pageSize, Integer status);
+    /**
+     * 用户端订单分页查询
+     */
+    PageResult pageQuery4User(int page, int pageSize, Integer status);
 
-    OrderVO getOrderById(Long id);
+    /**
+     * 查询订单详情
+     */
+    OrderVO details(Long id);
 
-    void cancel(Long id);
+    /**
+     * 用户取消订单
+     */
+    void userCancelById(Long id) throws Exception;
 
-    void again(Long id);
+    /**
+     * 再来一单
+     */
+    void repetition(Long id);
 }

@@ -24,4 +24,9 @@ public interface ShoppingCartMapper {
     void deleteById(Long userId);
 
     void delete(ShoppingCart cart);
+
+    /**
+     * 批量插入购物车数据
+     */
+    void insertBatch(List<ShoppingCart> shoppingCartList);
 }
