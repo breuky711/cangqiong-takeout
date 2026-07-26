@@ -6,6 +6,7 @@ import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
+import com.sky.dto.OrdersRejectionDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
@@ -313,4 +314,37 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(Orders.COMPLETED);
         orderMapper.update(order);
     }
+
+    /*
+    * 拒单
+    * */
+
+    @Override
+    public void rejectOrder(OrdersRejectionDTO ordersRejectionDTO) throws Exception {
+        // 根据id查询订单
+        Orders order = orderMapper.getById(ordersRejectionDTO.getId());
+        // 校验订单是否存在且处于待接单状态
+        if (order == null || !order.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        // 如果订单已付款，需要退款
+        if (order.getPayStatus().equals(Orders.PAID)){
+/*            weChatPayUtil.refund(
+                    order.getNumber(),
+                    order.getNumber(),
+                    order.getAmount(),
+                    order.getAmount());
+        */
+            // 更新支付状态模拟退款
+            order.setPayStatus(Orders.REFUND);
+        }
+
+        // 更新订单状态和拒单原因
+        order.setStatus(Orders.CANCELLED);
+        order.setRejectionReason(ordersRejectionDTO.getRejectionReason());
+        order.setCancelTime(LocalDateTime.now());
+        orderMapper.update(order);
+    }
+
 }
