@@ -4,10 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
-import com.sky.dto.OrdersConfirmDTO;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersRejectionDTO;
-import com.sky.dto.OrdersSubmitDTO;
+import com.sky.dto.*;
 import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
@@ -225,8 +222,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /*
-    * 订单搜索
-    * */
+     * 订单搜索
+     * */
 
     @Override
     public PageResult orderSearch(OrdersPageQueryDTO ordersPageQueryDTO) {
@@ -255,8 +252,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /*
-    * 各个状态的订单统计
-    * */
+     * 各个状态的订单统计
+     * */
 
     @Override
     public OrderStatisticsVO orderStatusStatistics() {
@@ -270,8 +267,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /*
-    * 接单
-    * */
+     * 接单
+     * */
 
     @Override
     public void acceptOrder(OrdersConfirmDTO ordersConfirmDTO) {
@@ -282,15 +279,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /*
-    * 派送订单
-    * */
+     * 派送订单
+     * */
 
     @Override
     public void deliveryOrder(Long id) {
         // 根据id查询订单
         Orders order = orderMapper.getById(id);
         // 校验订单是否存在且处于已接单状态
-        if (order == null || !order.getStatus().equals(Orders.CONFIRMED)){
+        if (order == null || !order.getStatus().equals(Orders.CONFIRMED)) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
         // 更新订单状态为派送中
@@ -299,15 +296,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /*
-    * 完成订单
-    * */
+     * 完成订单
+     * */
 
     @Override
     public void completeOrder(Long id) {
         // 根据id查询订单
         Orders order = orderMapper.getById(id);
         // 校验订单是否存在且处于派送中状态
-        if (order == null || !order.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)){
+        if (order == null || !order.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
         // 将状态更新为已完成
@@ -316,20 +313,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /*
-    * 拒单
-    * */
+     * 拒单
+     * */
 
     @Override
     public void rejectOrder(OrdersRejectionDTO ordersRejectionDTO) throws Exception {
         // 根据id查询订单
         Orders order = orderMapper.getById(ordersRejectionDTO.getId());
         // 校验订单是否存在且处于待接单状态
-        if (order == null || !order.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+        if (order == null || !order.getStatus().equals(Orders.TO_BE_CONFIRMED)) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
 
         // 如果订单已付款，需要退款
-        if (order.getPayStatus().equals(Orders.PAID)){
+        if (order.getPayStatus().equals(Orders.PAID)) {
 /*            weChatPayUtil.refund(
                     order.getNumber(),
                     order.getNumber(),
@@ -347,4 +344,33 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(order);
     }
 
+    /*
+     * 取消订单
+     * */
+
+    @Override
+    public void cancelOrder(OrdersCancelDTO ordersCancelDTO) {
+        // 根据id查询订单
+        Orders order = orderMapper.getById(ordersCancelDTO.getId());
+        // 校验订单是否存在
+        if (order == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        // 如果已经支付则需要退款
+        if (order.getPayStatus().equals(Orders.PAID)) {
+            /*            weChatPayUtil.refund(
+                    order.getNumber(),
+                    order.getNumber(),
+                    order.getAmount(),
+                    order.getAmount());
+        */
+            // 更新支付状态模拟退款
+            order.setPayStatus(Orders.REFUND);
+        }
+        // 更新订单状态和取消原因
+        order.setStatus(Orders.CANCELLED);
+        order.setCancelReason(ordersCancelDTO.getCancelReason());
+        order.setCancelTime(LocalDateTime.now());
+        orderMapper.update(order);
+    }
 }
