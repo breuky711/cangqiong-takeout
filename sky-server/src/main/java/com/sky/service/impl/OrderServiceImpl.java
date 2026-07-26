@@ -245,6 +245,12 @@ public class OrderServiceImpl implements OrderService {
                 BeanUtils.copyProperties(orders, orderVO);
                 orderVO.setOrderDetailList(orderDetails);
 
+                // 将订单菜品信息拼接为字符串
+                String orderDishes = orderDetails.stream()
+                        .map(x -> x.getName() + "*" + x.getNumber() + ";")
+                        .collect(Collectors.joining());
+                orderVO.setOrderDishes(orderDishes);
+
                 list.add(orderVO);
             }
         }
@@ -307,8 +313,9 @@ public class OrderServiceImpl implements OrderService {
         if (order == null || !order.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
-        // 将状态更新为已完成
+        // 将状态更新为已完成，并记录送达时间
         order.setStatus(Orders.COMPLETED);
+        order.setDeliveryTime(LocalDateTime.now());
         orderMapper.update(order);
     }
 
