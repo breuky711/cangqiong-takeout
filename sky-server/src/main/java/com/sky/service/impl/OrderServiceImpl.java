@@ -20,6 +20,7 @@ import com.sky.mapper.ShoppingCartMapper;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import org.springframework.beans.BeanUtils;
@@ -35,6 +36,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
+    private static final Integer TOBECONFIRMED = 2;
+    private static final Integer CONFIRMED = 3;
+    private static final Integer DELIVERYINPROGRESS = 4;
 
     @Autowired
     private OrderMapper orderMapper;
@@ -249,5 +254,20 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return new PageResult(page.getTotal(), list);
+    }
+
+    /*
+    * 各个状态的订单统计
+    * */
+
+    @Override
+    public OrderStatisticsVO orderStatusStatistics() {
+        OrderStatisticsVO orderStatisticsVO = new OrderStatisticsVO();
+        // 订单状态统计
+        orderStatisticsVO.setToBeConfirmed(orderMapper.countByStatus(TOBECONFIRMED));
+        orderStatisticsVO.setConfirmed(orderMapper.countByStatus(CONFIRMED));
+        orderStatisticsVO.setDeliveryInProgress(orderMapper.countByStatus(DELIVERYINPROGRESS));
+
+        return orderStatisticsVO;
     }
 }
