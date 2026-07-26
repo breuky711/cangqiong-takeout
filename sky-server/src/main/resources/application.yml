@@ -52,3 +52,7 @@ sky:
   wechat:
     appid: ${sky.wechat.appid}
     secret: ${sky.wechat.secret}
+  shop:
+    address: 浙江省湖州市安吉县
+  baidu:
+    ak: Vgaar1VvINUb96QpKpr5uHdrtO00cYnq
