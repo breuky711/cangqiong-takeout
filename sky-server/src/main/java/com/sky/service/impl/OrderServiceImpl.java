@@ -296,4 +296,21 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(Orders.DELIVERY_IN_PROGRESS);
         orderMapper.update(order);
     }
+
+    /*
+    * 完成订单
+    * */
+
+    @Override
+    public void completeOrder(Long id) {
+        // 根据id查询订单
+        Orders order = orderMapper.getById(id);
+        // 校验订单是否存在且处于派送中状态
+        if (order == null || !order.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        // 将状态更新为已完成
+        order.setStatus(Orders.COMPLETED);
+        orderMapper.update(order);
+    }
 }
