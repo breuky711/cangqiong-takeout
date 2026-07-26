@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.AddressBook;
@@ -36,10 +37,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-
-    private static final Integer TOBECONFIRMED = 2;
-    private static final Integer CONFIRMED = 3;
-    private static final Integer DELIVERYINPROGRESS = 4;
 
     @Autowired
     private OrderMapper orderMapper;
@@ -264,10 +261,39 @@ public class OrderServiceImpl implements OrderService {
     public OrderStatisticsVO orderStatusStatistics() {
         OrderStatisticsVO orderStatisticsVO = new OrderStatisticsVO();
         // 订单状态统计
-        orderStatisticsVO.setToBeConfirmed(orderMapper.countByStatus(TOBECONFIRMED));
-        orderStatisticsVO.setConfirmed(orderMapper.countByStatus(CONFIRMED));
-        orderStatisticsVO.setDeliveryInProgress(orderMapper.countByStatus(DELIVERYINPROGRESS));
+        orderStatisticsVO.setToBeConfirmed(orderMapper.countByStatus(Orders.TO_BE_CONFIRMED));
+        orderStatisticsVO.setConfirmed(orderMapper.countByStatus(Orders.CONFIRMED));
+        orderStatisticsVO.setDeliveryInProgress(orderMapper.countByStatus(Orders.DELIVERY_IN_PROGRESS));
 
         return orderStatisticsVO;
+    }
+
+    /*
+    * 接单
+    * */
+
+    @Override
+    public void acceptOrder(OrdersConfirmDTO ordersConfirmDTO) {
+        Orders orders = new Orders();
+        orders.setId(ordersConfirmDTO.getId());
+        orders.setStatus(Orders.CONFIRMED);
+        orderMapper.update(orders);
+    }
+
+    /*
+    * 派送订单
+    * */
+
+    @Override
+    public void deliveryOrder(Long id) {
+        // 根据id查询订单
+        Orders order = orderMapper.getById(id);
+        // 校验订单是否存在且处于已接单状态
+        if (order == null || !order.getStatus().equals(Orders.CONFIRMED)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        // 更新订单状态为派送中
+        order.setStatus(Orders.DELIVERY_IN_PROGRESS);
+        orderMapper.update(order);
     }
 }
