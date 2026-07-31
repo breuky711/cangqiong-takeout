@@ -9,7 +9,7 @@
         (#{openid}, #{name}, #{phone}, #{sex}, #{idNumber}, #{avatar}, #{createTime})
     </insert>
     <select id="getUserByMap" resultType="java.lang.Integer">
-        select count(*) from user
+        select count(id) from user
         <where>
             <if test="begin != null">
                 and create_time &gt;= #{begin}
